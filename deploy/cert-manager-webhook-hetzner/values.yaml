@@ -13,8 +13,8 @@ certManager:
   serviceAccountName: cert-manager
 
 image:
-  repository: ghcr.io/Diftraku/cert-manager-webhook-henet
-  tag: latest
+  repository: ghcr.io/diftraku/cert-manager-webhook-henet
+  tag: master
   pullPolicy: IfNotPresent
 
 nameOverride: ""

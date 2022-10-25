@@ -1,4 +1,4 @@
-# ACME webhook for henet DNS API
+# ACME webhook for Hurricane Electric Hosted DNS
 
 This solver can be used when you want to use cert-manager with [Hurricane Electric hosted DNS](https://dns.he.net/) zones.
 
@@ -6,7 +6,7 @@ This solver can be used when you want to use cert-manager with [Hurricane Electr
 
 This is not considered ready for production, nor has it been tested. I do not know enough Go to make heads or tails about the code but I know enough to be dangerous.
 
-This version is provided as-is, without any guarantees that it won't wreck your coffee maker or kuberenetes installation. **Use at your own risk!**
+This version is provided as-is, without any guarantees that it won't wreck your coffee maker or kubernetes installation. **Use at your own risk!**
 
 ## Requirements
 -   [go](https://golang.org/) >= 1.13.0
