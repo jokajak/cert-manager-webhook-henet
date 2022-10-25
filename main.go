@@ -86,7 +86,8 @@ func (c *HEnetDNSProviderSolver) Present(ch *v1alpha1.ChallengeRequest) error {
 		}
 	}()
 
-	respBody, _ := string(ioutil.ReadAll(resp.Body))
+	respBody, _ := ioutil.ReadAll(resp.Body)
+	body = string(respBody)
 	if resp.StatusCode != http.StatusOK {
 		text := "Error calling API status:" + resp.Status + " url: " +  apiUrl + " method: " + method
 		klog.Error(text)
@@ -94,21 +95,21 @@ func (c *HEnetDNSProviderSolver) Present(ch *v1alpha1.ChallengeRequest) error {
 	}
 
 	// We need to confirm the status from the API
-	if strings.Index(respBody, "badauth") > -1 {
+	if strings.Index(body, "badauth") > -1 {
 		text := "Error calling API, response 'badauth'"
 		klog.Error(text)
 		return errors.New(text)
 	}
 
 	// Hail-mary check that we got a good response
-	if strings.Index(respBody, "good") == -1 {
-		text := "Error calling API, unknown response: " + respBody
+	if strings.Index(body, "good") == -1 {
+		text := "Error calling API, unknown response: " + body
 		klog.Error(text)
 		return errors.New(text)
 	}
 
 	// At this point, we should be fine (status from server was "good")
-	text := "API responded:" + resp.Status + " url: " +  apiUrl + " method: " + method + " body: " + respBody
+	text := "API responded:" + resp.Status + " url: " +  apiUrl + " method: " + method + " body: " + body
 	klog.Info(text)
 
 	klog.Infof("Succesfully presented txt record %v", ch.ResolvedFQDN)
