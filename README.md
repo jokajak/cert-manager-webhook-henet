@@ -83,9 +83,10 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: henet-secret
+  namespace: cert-manager
 type: Opaque
 data:
-  api-key: your-key-base64-encoded
+  password: your-key-base64-encoded
 ```
 
 ### Create a certificate
