@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"errors"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -85,13 +86,16 @@ func (c *HEnetDNSProviderSolver) Present(ch *v1alpha1.ChallengeRequest) error {
 		}
 	}()
 
+	respBody, _ := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
 		text := "Error calling API status:" + resp.Status + " url: " +  apiUrl + " method: " + method
 		klog.Error(text)
 		return errors.New(text)
 	}
+	text := "API responded:" + resp.Status + " url: " +  apiUrl + " method: " + method + " body: " + string(respBody)
+	klog.Info(text)
 
-	klog.Infof("Presented txt record %v", ch.ResolvedFQDN)
+	klog.Infof("Succesfully presented txt record %v", ch.ResolvedFQDN)
 
 	return nil
 }
@@ -152,14 +156,6 @@ func clientConfig(c *HEnetDNSProviderSolver, ch *v1alpha1.ChallengeRequest) (Int
 	}
 
 	return config, nil
-}
-
-// From: https://stackoverflow.com/a/35966287
-// Because I don't really know how to ignore variables like in Python
-func Use(vals ...interface{}) {
-    for _, val := range vals {
-        _ = val
-    }
 }
 
 func stringFromSecretData(secretData *map[string][]byte, key string) (string, error) {
