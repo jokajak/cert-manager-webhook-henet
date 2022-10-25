@@ -13,7 +13,7 @@ certManager:
   serviceAccountName: cert-manager
 
 image:
-  repository: zmejg/cert-manager-webhook-henet
+  repository: diftraku/cert-manager-webhook-henet
   tag: latest
   pullPolicy: IfNotPresent
 
