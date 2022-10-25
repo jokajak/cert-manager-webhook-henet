@@ -1,0 +1,4 @@
+{
+    "secretName": "henet-secret",
+    "apiUrl": "https://dyn.dns.he.net"
+}

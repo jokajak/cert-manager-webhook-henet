@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ include "cert-manager-webhook-hetzner.name" . }}
-    chart: {{ include "cert-manager-webhook-hetzner.chart" . }}
+    app: {{ include "cert-manager-webhook-henet.name" . }}
+    chart: {{ include "cert-manager-webhook-henet.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "cert-manager-webhook-hetzner.name" . }}
+      app: {{ include "cert-manager-webhook-henet.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "cert-manager-webhook-hetzner.name" . }}
+        app: {{ include "cert-manager-webhook-henet.name" . }}
         release: {{ .Release.Name }}
     spec:
-      serviceAccountName: {{ include "cert-manager-webhook-hetzner.fullname" . }}
+      serviceAccountName: {{ include "cert-manager-webhook-henet.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -54,7 +54,7 @@ spec:
       volumes:
         - name: certs
           secret:
-            secretName: {{ include "cert-manager-webhook-hetzner.servingCertificate" . }}
+            secretName: {{ include "cert-manager-webhook-henet.servingCertificate" . }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

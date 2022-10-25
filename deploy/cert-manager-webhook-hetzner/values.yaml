@@ -13,7 +13,7 @@ certManager:
   serviceAccountName: cert-manager
 
 image:
-  repository: zmejg/cert-manager-webhook-hetzner
+  repository: zmejg/cert-manager-webhook-henet
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -25,7 +25,7 @@ service:
   port: 443
 
 secretName:
-  - hetzner-secret
+  - henet-secret
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

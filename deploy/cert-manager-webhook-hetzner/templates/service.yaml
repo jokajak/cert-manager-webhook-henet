@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}
   labels:
-    app: {{ include "cert-manager-webhook-hetzner.name" . }}
-    chart: {{ include "cert-manager-webhook-hetzner.chart" . }}
+    app: {{ include "cert-manager-webhook-henet.name" . }}
+    chart: {{ include "cert-manager-webhook-henet.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: https
   selector:
-    app: {{ include "cert-manager-webhook-hetzner.name" . }}
+    app: {{ include "cert-manager-webhook-henet.name" . }}
     release: {{ .Release.Name }}

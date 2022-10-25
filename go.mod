@@ -1,4 +1,4 @@
-module github.com/vadimkim/cert-manager-webhook-hetzner
+module github.com/diftraku/cert-manager-webhook-henet
 
 go 1.14
 

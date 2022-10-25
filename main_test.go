@@ -1,11 +1,12 @@
 package main
 
 import (
-	"math/rand"
 	"os"
 	"testing"
 
 	"github.com/jetstack/cert-manager/test/acme/dns"
+
+	"github.com/cert-manager/webhook-example/example"
 )
 
 var (
@@ -20,11 +21,11 @@ func TestRunsSuite(t *testing.T) {
 
 	fqdn = GetRandomString(20) + "." + zone
 
-	fixture := dns.NewFixture(&hetznerDNSProviderSolver{},
+	fixture := dns.NewFixture(&HEnetDNSProviderSolver{},
 		dns.SetResolvedZone(zone),
 		dns.SetResolvedFQDN(fqdn),
 		dns.SetAllowAmbientCredentials(false),
-		dns.SetManifestPath("testdata/hetzner"),
+		dns.SetManifestPath("testdata/henet"),
 		dns.SetBinariesPath("kubebuilder/bin"),
 	)
 

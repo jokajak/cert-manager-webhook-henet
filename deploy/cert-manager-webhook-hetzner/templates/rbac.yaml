@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}
   labels:
-    app: {{ include "cert-manager-webhook-hetzner.name" . }}
-    chart: {{ include "cert-manager-webhook-hetzner.chart" . }}
+    app: {{ include "cert-manager-webhook-henet.name" . }}
+    chart: {{ include "cert-manager-webhook-henet.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 ---
@@ -14,11 +14,11 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}:webhook-authentication-reader
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}:webhook-authentication-reader
   namespace: kube-system
   labels:
-    app: {{ include "cert-manager-webhook-hetzner.name" . }}
-    chart: {{ include "cert-manager-webhook-hetzner.chart" . }}
+    app: {{ include "cert-manager-webhook-henet.name" . }}
+    chart: {{ include "cert-manager-webhook-henet.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 roleRef:
@@ -28,7 +28,7 @@ roleRef:
 subjects:
   - apiGroup: ""
     kind: ServiceAccount
-    name: {{ include "cert-manager-webhook-hetzner.fullname" . }}
+    name: {{ include "cert-manager-webhook-henet.fullname" . }}
     namespace: {{ .Release.Namespace }}
 ---
 # apiserver gets the auth-delegator role to delegate auth decisions to
@@ -36,10 +36,10 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}:auth-delegator
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}:auth-delegator
   labels:
-    app: {{ include "cert-manager-webhook-hetzner.name" . }}
-    chart: {{ include "cert-manager-webhook-hetzner.chart" . }}
+    app: {{ include "cert-manager-webhook-henet.name" . }}
+    chart: {{ include "cert-manager-webhook-henet.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 roleRef:
@@ -49,17 +49,17 @@ roleRef:
 subjects:
   - apiGroup: ""
     kind: ServiceAccount
-    name: {{ include "cert-manager-webhook-hetzner.fullname" . }}
+    name: {{ include "cert-manager-webhook-henet.fullname" . }}
     namespace: {{ .Release.Namespace }}
 ---
 # Grant cert-manager permission to validate using our apiserver
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}:domain-solver
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}:domain-solver
   labels:
-    app: {{ include "cert-manager-webhook-hetzner.name" . }}
-    chart: {{ include "cert-manager-webhook-hetzner.chart" . }}
+    app: {{ include "cert-manager-webhook-henet.name" . }}
+    chart: {{ include "cert-manager-webhook-henet.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 rules:
@@ -73,16 +73,16 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}:domain-solver
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}:domain-solver
   labels:
-    app: {{ include "cert-manager-webhook-hetzner.name" . }}
-    chart: {{ include "cert-manager-webhook-hetzner.chart" . }}
+    app: {{ include "cert-manager-webhook-henet.name" . }}
+    chart: {{ include "cert-manager-webhook-henet.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}:domain-solver
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}:domain-solver
 subjects:
   - apiGroup: ""
     kind: ServiceAccount
@@ -92,7 +92,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}:secret-reader
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}:secret-reader
   namespace: {{ .Release.Namespace }}
 rules:
   - apiGroups:
@@ -110,14 +110,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}:secret-reader
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}:secret-reader
   namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "cert-manager-webhook-hetzner.fullname" . }}:secret-reader
+  name: {{ include "cert-manager-webhook-henet.fullname" . }}:secret-reader
 subjects:
   - apiGroup: ""
     kind: ServiceAccount
-    name: {{ include "cert-manager-webhook-hetzner.fullname" . }}
+    name: {{ include "cert-manager-webhook-henet.fullname" . }}
     namespace: {{ .Release.Namespace }}
