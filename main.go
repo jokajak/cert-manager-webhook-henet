@@ -10,14 +10,11 @@ import (
 	"os"
 
 	extapi "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
-	//"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/jetstack/cert-manager/pkg/acme/webhook/apis/acme/v1alpha1"
 	"github.com/jetstack/cert-manager/pkg/acme/webhook/cmd"
 
-	extapi "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
@@ -44,6 +41,10 @@ type HEnetDNSProviderConfig struct {
 	SecretRef string `json:"secretName"`
 }
 
+type InternalConfig struct {
+	Password, ApiUrl string
+}
+
 func (c *HEnetDNSProviderSolver) Name() string {
 	return "hurricane-electric"
 }
@@ -57,33 +58,20 @@ func (c *HEnetDNSProviderSolver) Present(ch *v1alpha1.ChallengeRequest) error {
 		return fmt.Errorf("unable to get secret `%s`; %v", ch.ResourceNamespace, err)
 	}
 
-	var url = fmt.Sprintf(`%s/nic/update?hostname=%s&password=%s&txt=%s`, config.ApiUrl, ch.ResolvedFQDN, config.Password, ch.Key)
-	req, err := http.NewRequest(method, url, body)
+	url := fmt.Sprintf(`%s/nic/update?hostname=%s&password=%s&txt=%s`, config.ApiUrl, ch.ResolvedFQDN, config.Password, ch.Key)
+
+	add, err := callDnsApi(url, "GET", nil, config)
+
+	// Because I don't really know the alternative to Python's _ placeholder for eating up tuple elements
+	Use(add)
+
 	if err != nil {
-		return []byte{}, fmt.Errorf("unable to execute request %v", err)
+		klog.Error(err)
 	}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
+	klog.Infof("Presented txt record %v", ch.ResolvedFQDN)
 
-	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			klog.Fatal(err)
-		}
-	}()
-
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode == http.StatusOK {
-		return respBody, nil
-	}
-
-	text := "Error calling API status:" + resp.Status + " url: " +  url + " method: " + method
-	klog.Error(text)
-	return nil, errors.New(text)
+	return nil
 }
 
 func (c *HEnetDNSProviderSolver) CleanUp(ch *v1alpha1.ChallengeRequest) error {
@@ -118,8 +106,8 @@ func loadConfig(cfgJSON *extapi.JSON) (HEnetDNSProviderConfig, error) {
 	return cfg, nil
 }
 
-func clientConfig(c *HEnetDNSProviderSolver, ch *v1alpha1.ChallengeRequest) (internal.Config, error) {
-	var config internal.Config
+func clientConfig(c *HEnetDNSProviderSolver, ch *v1alpha1.ChallengeRequest) (InternalConfig, error) {
+	var config InternalConfig
 
 	cfg, err := loadConfig(ch.Config)
 	if err != nil {
@@ -142,4 +130,49 @@ func clientConfig(c *HEnetDNSProviderSolver, ch *v1alpha1.ChallengeRequest) (int
 	}
 
 	return config, nil
+}
+
+// From: https://stackoverflow.com/a/35966287
+// Because I don't really know how to ignore variables like in Python
+func Use(vals ...interface{}) {
+    for _, val := range vals {
+        _ = val
+    }
+}
+
+func stringFromSecretData(secretData *map[string][]byte, key string) (string, error) {
+	data, ok := (*secretData)[key]
+	if !ok {
+		return "", fmt.Errorf("key %q not found in secret data", key)
+	}
+	return string(data), nil
+}
+
+func callDnsApi (url string, method string, body io.Reader, config InternalConfig) ([]byte, error) {
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return []byte{}, fmt.Errorf("unable to execute request %v", err)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			klog.Fatal(err)
+		}
+	}()
+
+	respBody, _ := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode == http.StatusOK {
+		return respBody, nil
+	}
+
+	text := "Error calling API status:" + resp.Status + " url: " +  url + " method: " + method
+	klog.Error(text)
+	return nil, errors.New(text)
 }
