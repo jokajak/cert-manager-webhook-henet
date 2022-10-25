@@ -1,7 +1,3 @@
-# Folders
-kubebuilder
-.vscode/
-.idea/
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -16,4 +12,8 @@ kubebuilder
 *.out
 
 # Ignore the built binary
-/cert-manager-webhook-henet
+cert-manager-webhook-henet
+
+# Make artifacts
+_out
+_test
