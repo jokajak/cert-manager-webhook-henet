@@ -87,7 +87,7 @@ func (c *HEnetDNSProviderSolver) Present(ch *v1alpha1.ChallengeRequest) error {
 	}()
 
 	respBody, _ := ioutil.ReadAll(resp.Body)
-	body = string(respBody)
+	body := string(respBody)
 	if resp.StatusCode != http.StatusOK {
 		text := "Error calling API status:" + resp.Status + " url: " +  apiUrl + " method: " + method
 		klog.Error(text)
