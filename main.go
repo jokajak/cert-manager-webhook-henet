@@ -61,7 +61,8 @@ func (c *HEnetDNSProviderSolver) Present(ch *v1alpha1.ChallengeRequest) error {
 	apiUrl := fmt.Sprintf(`%s/nic/update`, config.ApiUrl)
 	method := "POST"
 	data := url.Values{}
-	data.Set("hostname", ch.ResolvedFQDN)
+	// The hostname should be the full hostname without a trailing dot
+	data.Set("hostname", strings.TrimRight(ch.ResolvedFQDN, "."))
 	data.Set("password", config.Password)
 	data.Set("txt", ch.Key)
 
