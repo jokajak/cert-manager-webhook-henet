@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"errors"
-	"io"
-	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strings"
 	"os"
 
 	extapi "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
@@ -58,15 +58,36 @@ func (c *HEnetDNSProviderSolver) Present(ch *v1alpha1.ChallengeRequest) error {
 		return fmt.Errorf("unable to get secret `%s`; %v", ch.ResourceNamespace, err)
 	}
 
-	url := fmt.Sprintf(`%s/nic/update?hostname=%s&password=%s&txt=%s`, config.ApiUrl, ch.ResolvedFQDN, config.Password, ch.Key)
+	apiUrl := fmt.Sprintf(`%s/nic/update`, config.ApiUrl)
+	method := "POST"
+	data := url.Values{}
+	data.Set("hostname", ch.ResolvedFQDN)
+	data.Set("password", config.Password)
+	data.Set("txt", ch.Key)
 
-	add, err := callDnsApi(url, "GET", nil, config)
-
-	// Because I don't really know the alternative to Python's _ placeholder for eating up tuple elements
-	Use(add)
-
+	req, err := http.NewRequest(method, apiUrl, strings.NewReader(data.Encode()))
 	if err != nil {
-		klog.Error(err)
+		return fmt.Errorf("unable to execute request %v", err)
+	}
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			klog.Fatal(err)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		text := "Error calling API status:" + resp.Status + " url: " +  apiUrl + " method: " + method
+		klog.Error(text)
+		return errors.New(text)
 	}
 
 	klog.Infof("Presented txt record %v", ch.ResolvedFQDN)
@@ -146,33 +167,4 @@ func stringFromSecretData(secretData *map[string][]byte, key string) (string, er
 		return "", fmt.Errorf("key %q not found in secret data", key)
 	}
 	return string(data), nil
-}
-
-func callDnsApi (url string, method string, body io.Reader, config InternalConfig) ([]byte, error) {
-	req, err := http.NewRequest(method, url, body)
-	if err != nil {
-		return []byte{}, fmt.Errorf("unable to execute request %v", err)
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			klog.Fatal(err)
-		}
-	}()
-
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode == http.StatusOK {
-		return respBody, nil
-	}
-
-	text := "Error calling API status:" + resp.Status + " url: " +  url + " method: " + method
-	klog.Error(text)
-	return nil, errors.New(text)
 }
