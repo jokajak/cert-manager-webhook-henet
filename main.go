@@ -118,7 +118,7 @@ func loadConfig(cfgJSON *extapi.JSON) (HEnetDNSProviderConfig, error) {
 	return cfg, nil
 }
 
-func clientConfig(c *hetznerDNSProviderSolver, ch *v1alpha1.ChallengeRequest) (internal.Config, error) {
+func clientConfig(c *HEnetDNSProviderSolver, ch *v1alpha1.ChallengeRequest) (internal.Config, error) {
 	var config internal.Config
 
 	cfg, err := loadConfig(ch.Config)
