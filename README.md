@@ -9,10 +9,10 @@ This is not considered ready for production, nor has it been tested. I do not kn
 This version is provided as-is, without any guarantees that it won't wreck your coffee maker or kubernetes installation. **Use at your own risk!**
 
 ## Requirements
--   [go](https://golang.org/) >= 1.13.0
+-   [go](https://golang.org/) >= 1.17.0
 -   [helm](https://helm.sh/) >= v3.0.0
--   [kubernetes](https://kubernetes.io/) >= v1.14.0
--   [cert-manager](https://cert-manager.io/) >= 0.12.0
+-   [kubernetes](https://kubernetes.io/) >= v1.21.1
+-   [cert-manager](https://cert-manager.io/) >= 1.7.0
 
 ## Installation
 
@@ -119,15 +119,12 @@ else they will have undetermined behaviour when used with cert-manager.
 **It is essential that you configure and run the test suite when creating a
 DNS01 webhook.**
 
-First, you need to have henet account with access to DNS control panel. You need to create API token and have a registered and verified DNS zone there.
-Then you need to replace `zoneName` parameter at `testdata/henet/config.json` file with actual one.
-You also must encode your api token into base64 and put the hash into `testdata/henet/henet-secret.yml` file.
+First, you need to have a Hurricane Electric account with access to the DNS control panel. You need to create a new TXT record with the name of `cert-manager-dns01-tests`, use TTL of 5 minutes and ensure **Enable entry for dynamic dns** is checked. Use the circular arrows icon to set or generate the key for dynamic updates.
+You can either set the `zoneName` parameter in `testdata/henet/config.json` to your zone name or use the `TEST_ZONE_NAME` as in the example below.
+You also must encode your key into base64 and put the hash into `testdata/henet/henet-secret.yml` file.
 
-You can then run the test suite with:
+You can run the test suite with:
 
 ```bash
-# first install necessary binaries (only required once)
-./scripts/fetch-test-binaries.sh
-# then run the tests
-TEST_ZONE_NAME=example.com. make verify
+$ TEST_ZONE_NAME=example.com. make test
 ```
