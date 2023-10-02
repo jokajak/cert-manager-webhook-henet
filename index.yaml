@@ -11,14 +11,4 @@ entries:
     urls:
     - https://jokajak.github.io/cert-manager-webhook-henet/cert-manager-webhook-henet-1.0.0.tgz
     version: 1.0.0
-  cert-manager-webhook-hetzner:
-  - apiVersion: v1
-    appVersion: 1.0.0
-    created: "2020-05-08T12:06:45.648766883+03:00"
-    description: Allow cert-manager to solve DNS challenges using Hetzner DNS API
-    digest: d457ba3668b4d12ee965f5653a6fa5ec4154ed10688cf6141471a5408c624ca8
-    name: cert-manager-webhook-hetzner
-    urls:
-    - https://vadimkim.github.io/cert-manager-webhook-hetzner/cert-manager-webhook-hetzner-1.0.0.tgz
-    version: 1.0.0
 generated: "2023-10-02T02:49:50.888612416Z"
