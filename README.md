@@ -9,10 +9,11 @@ This is not considered ready for production, nor has it been tested. I do not kn
 This version is provided as-is, without any guarantees that it won't wreck your coffee maker or kubernetes installation. **Use at your own risk!**
 
 ## Requirements
--   [go](https://golang.org/) >= 1.17.0
+
+-   [go](https://golang.org/) >= 1.19.0
 -   [helm](https://helm.sh/) >= v3.0.0
--   [kubernetes](https://kubernetes.io/) >= v1.21.1
--   [cert-manager](https://cert-manager.io/) >= 1.7.0
+-   [kubernetes](https://kubernetes.io/) >= v1.25.0
+-   [cert-manager](https://cert-manager.io/) >= 1.11
 
 ## Installation
 
@@ -23,8 +24,9 @@ Follow the [instructions](https://cert-manager.io/docs/installation/) using the 
 ### Webhook
 
 #### Using public helm chart
+
 ```bash
-helm repo add cert-manager-webhook-henet https://diftraku.github.io/cert-manager-webhook-henet
+helm repo add cert-manager-webhook-henet https://jokajak.github.io/cert-manager-webhook-henet
 # Replace the groupName value with your desired domain
 helm install --namespace cert-manager cert-manager-webhook-henet cert-manager-webhook-henet/cert-manager-webhook-henet --set groupName=acme.yourdomain.tld
 ```
@@ -34,9 +36,11 @@ helm install --namespace cert-manager cert-manager-webhook-henet cert-manager-we
 ```bash
 helm install --namespace cert-manager cert-manager-webhook-henet deploy/cert-manager-webhook-henet
 ```
+
 **Note**: The kubernetes resources used to install the Webhook should be deployed within the same namespace as the cert-manager.
 
 To uninstall the webhook run
+
 ```bash
 helm uninstall --namespace cert-manager cert-manager-webhook-henet
 ```
@@ -44,6 +48,7 @@ helm uninstall --namespace cert-manager cert-manager-webhook-henet
 ## Issuer
 
 Create a `ClusterIssuer` or `Issuer` resource as following:
+
 ```yaml
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -78,6 +83,7 @@ In order to access the henet API, the webhook needs an API token.
 If you choose another name for the secret than `henet-secret`, ensure you modify the value of `secretName` in the `[Cluster]Issuer`.
 
 The secret for the example above will look like this:
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -126,5 +132,10 @@ You also must encode your key into base64 and put the hash into `testdata/henet/
 You can run the test suite with:
 
 ```bash
-$ TEST_ZONE_NAME=example.com. make test
+TEST_ZONE_NAME=example.com. make test
 ```
+
+## Credits
+
+This was forked from <https://github.com/Diftraku/cert-manager-webhook-henet> who did all the work of making it work
+with Hurricane Electric. I just updated the repo to have tests and newer libraries.

@@ -13,7 +13,7 @@ certManager:
   serviceAccountName: cert-manager
 
 image:
-  repository: ghcr.io/diftraku/cert-manager-webhook-henet
+  repository: ghcr.io/jokajak/cert-manager-webhook-henet
   tag: latest
   pullPolicy: IfNotPresent
 
