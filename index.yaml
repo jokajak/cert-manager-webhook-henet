@@ -3,12 +3,12 @@ entries:
   cert-manager-webhook-henet:
   - apiVersion: v1
     appVersion: 0.1.5
-    created: "2023-10-02T02:49:50.889198318Z"
+    created: "2023-10-02T12:44:46.579782428Z"
     description: Allow cert-manager to solve DNS challenges using Hurricane Electric
       Hosted DNS
-    digest: 085776c7c5614e5684f5e36bd1f1e45bc3634b1860bc0793b8569e2d897def12
+    digest: eca9895e07fcb738d04d8d8fa0c6b507b84bb1705cee1b46de09b8ffc13f9c0d
     name: cert-manager-webhook-henet
     urls:
     - https://jokajak.github.io/cert-manager-webhook-henet/cert-manager-webhook-henet-1.0.0.tgz
     version: 1.0.0
-generated: "2023-10-02T02:49:50.888612416Z"
+generated: "2023-10-02T12:44:46.578350412Z"
