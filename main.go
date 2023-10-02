@@ -21,12 +21,22 @@ import (
 	"github.com/cert-manager/cert-manager/pkg/acme/webhook/cmd"
 )
 
-var GroupName = os.Getenv("GROUP_NAME")
+// HTTPClient interface
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
+var (
+  GroupName = os.Getenv("GROUP_NAME")
+  Client HTTPClient
+)
 
 func main() {
 	if GroupName == "" {
 		panic("GROUP_NAME must be specified")
 	}
+
+  Client = &http.Client{}
 
 	cmd.RunWebhookServer(GroupName,
 		&HEnetDNSProviderSolver{},
@@ -108,8 +118,7 @@ func handleRequest(c *HEnetDNSProviderSolver, ch *v1alpha1.ChallengeRequest, cle
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := Client.Do(req)
 	if err != nil {
 		return err
 	}
